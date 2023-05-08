@@ -42,7 +42,7 @@ swagger_urls = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('common.urls')),
+    path('categories/', include('common.urls')),
     path('users/', include('users.urls')),
     path('products/', include('products.urls')),
 ]
