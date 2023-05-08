@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import CustomUser
-from users.serializers import RegisterSerializers, LoginSerializers, CustomTokenObtainPairSerializer, UserSerializer
+from users.serializers import RegisterSerializers, LoginSerializers, CustomTokenObtainPairSerializer, UserSerializer, \
+    UserDetailSerializer
 
 
 class RegisterView(APIView):
@@ -30,6 +31,12 @@ class ProfileView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
+    def put(self, request, *args, **kwargs):
+        serializers = UserDetailSerializer(instance=request.user, data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):

@@ -1,55 +1,127 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
+from rest_framework import generics
 
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from common.models import Category
 from products.models import Product
 
-from products.serializers import ProductSerializer
+from products.serializers import ProductListSerializer, ProductCreateSerializer
 
 
-class ProductListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+class ProductListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
 
-    def get(self, request):
-        products = Product.objects.order_by('-id')
-        serializers = ProductSerializer(products, many=True)
-        return Response(serializers.data)
+    # serializer_class = ProductListSerializer
 
-    def post(self, request):
-        serializers = ProductSerializer(data=request.data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
-        return Response(serializers.data, status=status.HTTP_400_BAD_REQUEST)
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ProductCreateSerializer
+
+        return ProductListSerializer
 
 
-class ProductDetailView(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(Product, pk=pk)
+class ProductRetrieveView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductListSerializer
 
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        serializers = ProductSerializer(self.get_object(pk))
-        return Response(serializers.data)
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
-    def put(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        serializers = ProductSerializer(instance=self.get_object(pk), data=request.data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        return Response(serializers.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        product = self.get_object(pk)
-        product.delete()
-        return Response('Deleted', status=status.HTTP_404_NOT_FOUND)
+class ProductUpdateView(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductCreateSerializer
+
+
+class ProductDeleteView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+
+
+class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductListSerializer
+    lookup_field = 'slug'
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return ProductCreateSerializer
+        return ProductListSerializer
+
+    """
+        Shunaqa metodlrini ishlatsak xam bo'ladi
+    """
+    # def retrieve(self, request, *args, **kwargs):
+    #     return super().retrieve(request, *args, **kwargs)
+    #
+    # def update(self, request, *args, **kwargs):
+    #     return super().update(request, *args, **kwargs)
+    #
+    # def destroy(self, request, *args, **kwargs):
+    #     return super().destroy(request, *args, **kwargs)
+
+
+# class ProductListView(generics.ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#
+#
+# class ProductCreateView(generics.CreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+
+
+"""
+        Class APIView bilan ishlangan viewlar!
+"""
+
+#
+# class ProductListCreateView(APIView):
+#     permission_classes = [IsAuthenticated]
+#
+#     def get(self, request):
+#         products = Product.objects.order_by('-id')
+#         serializers = ProductSerializer(products, many=True)
+#         return Response(serializers.data)
+#
+#     def post(self, request):
+#         serializers = ProductSerializer(data=request.data)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_201_CREATED)
+#         return Response(serializers.data, status=status.HTTP_400_BAD_REQUEST)
+#
+#
+# class ProductDetailView(APIView):
+#     def get_object(self, pk):
+#         return get_object_or_404(Product, pk=pk)
+#
+#     def get(self, request, *args, **kwargs):
+#         pk = kwargs.get('pk')
+#         serializers = ProductSerializer(self.get_object(pk))
+#         return Response(serializers.data)
+#
+#     def put(self, request, *args, **kwargs):
+#         pk = kwargs.get('pk')
+#         serializers = ProductSerializer(instance=self.get_object(pk), data=request.data)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         return Response(serializers.data, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def delete(self, request, *args, **kwargs):
+#         pk = kwargs.get('pk')
+#         product = self.get_object(pk)
+#         product.delete()
+#         return Response('Deleted', status=status.HTTP_404_NOT_FOUND)
+
+
+"""
+        decorator api_view larr bilan ishlangan viewlar!
+"""
 
 # @api_view(['GET'])
 # def get_products_list(request):

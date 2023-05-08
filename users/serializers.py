@@ -12,7 +12,21 @@ from users.models import CustomUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'last_name', 'phone')
+        fields = ('id', 'email', 'full_name', 'phone')
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'email', 'first_name', 'last_name', 'phone')
+        read_only_fields = ('id',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('first_name', None)
+        data.pop('last_name', None)
+        data['full-name'] = instance.get_full_name()
+        return data
 
 
 class CustomTokenObtainPairSerializer(TokenObtainSerializer):
