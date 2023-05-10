@@ -72,3 +72,12 @@ class RegisterSerializers(serializers.ModelSerializer):
 class LoginSerializers(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+class SenEmailVerificationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class CheckEmailVerificationCodeSerializers(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
