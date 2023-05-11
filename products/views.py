@@ -1,21 +1,20 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework import status
+from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from common.models import Category
+from paginations import CustomPageNumberPagination
 from products.models import Product
-
 from products.serializers import ProductListSerializer, ProductCreateSerializer
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
-
-    # serializer_class = ProductListSerializer
+    queryset = Product.objects.order_by('-id')
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
+    filterset_fields = ('category', 'brand')
+    ordering_fields = ('id', 'price')
+    search_fields = ('title', 'category__title', 'brand__title')
+    pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
         if self.request.method == 'POST':

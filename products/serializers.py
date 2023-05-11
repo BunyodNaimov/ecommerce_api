@@ -11,17 +11,11 @@ class ProductCategorySerializers(serializers.ModelSerializer):
 
 
 class ProductListSerializer(serializers.ModelSerializer):
-    # id = serializers.IntegerField(read_only=True)
     category = ProductCategorySerializers()
 
     class Meta:
         model = Product
-        fields = ['id', 'title', 'slug', 'price', 'category']
-
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     data["category"] = ProductCategorySerializers(instance.category).data
-    #     return data
+        fields = ['id', 'title', 'slug', 'price', 'image', 'category']
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):

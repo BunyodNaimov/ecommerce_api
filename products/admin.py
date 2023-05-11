@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from common.models import Category
 from products.models import Product
 
 
