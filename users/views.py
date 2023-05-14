@@ -15,10 +15,11 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import CustomUser, VerificationCode
 from users.serializers import RegisterSerializers, LoginSerializers, CustomTokenObtainPairSerializer, UserSerializer, \
-    UserDetailSerializer, SenEmailVerificationCodeSerializer, CheckEmailVerificationCodeSerializers
+    UserDetailSerializer, SendEmailVerificationCodeSerializer, CheckEmailVerificationCodeSerializers
 
 
 class RegisterView(APIView):
+    @swagger_auto_schema(request_body=RegisterSerializers)
     def post(self, request, *args, **kwargs):
         serializers = RegisterSerializers(data=request.data)
         serializers.is_valid(raise_exception=True)
@@ -62,9 +63,9 @@ class LoginView(APIView):
 class SendEmailVerificationCodeView(APIView):
     queryset = VerificationCode.objects.all()
 
-    @swagger_auto_schema(request_body=SenEmailVerificationCodeSerializer)
+    @swagger_auto_schema(request_body=SendEmailVerificationCodeSerializer)
     def post(self, request, *args, **kwargs):
-        serializer = SenEmailVerificationCodeSerializer(data=request.data)
+        serializer = SendEmailVerificationCodeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get('email')
         code = get_random_string(allowed_chars='0123456789', length=6)

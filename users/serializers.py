@@ -74,7 +74,7 @@ class LoginSerializers(serializers.Serializer):
     password = serializers.CharField()
 
 
-class SenEmailVerificationCodeSerializer(serializers.Serializer):
+class SendEmailVerificationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
