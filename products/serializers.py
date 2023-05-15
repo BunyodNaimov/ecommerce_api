@@ -19,7 +19,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    slug = serializers.IntegerField(required=False)
+    slug = serializers.SlugField(required=False, read_only=True)
 
     class Meta:
         model = Product
