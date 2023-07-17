@@ -38,6 +38,7 @@ class ProfileView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
+    @swagger_auto_schema(request_body=UserDetailSerializer)
     def put(self, request, *args, **kwargs):
         serializers = UserDetailSerializer(instance=request.user, data=request.data)
         if serializers.is_valid():
